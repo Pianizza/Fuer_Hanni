@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -73,35 +72,26 @@ body{
 
     text-align:center;
 
-    box-shadow:
-        0 20px 50px rgba(0,0,0,.35);
-
-    z-index:2;
+    box-shadow:0 20px 50px rgba(0,0,0,.35);
 }
 
-/* Dino Bild */
+/* Dino */
 .dino{
     width:180px;
     max-width:60%;
     display:block;
     margin:0 auto 20px;
-
     animation:bounce 4s ease-in-out infinite;
 }
 
 @keyframes bounce{
-    0%,100%{
-        transform:translateY(0);
-    }
-    50%{
-        transform:translateY(-10px);
-    }
+    0%,100%{transform:translateY(0);}
+    50%{transform:translateY(-10px);}
 }
 
 h1{
     font-size:2.8rem;
     margin-bottom:15px;
-    font-weight:700;
 }
 
 .subtitle{
@@ -111,7 +101,7 @@ h1{
     margin-bottom:35px;
 }
 
-/* Audio Controls */
+/* Controls */
 .controls{
     display:flex;
     justify-content:center;
@@ -122,20 +112,15 @@ h1{
 button{
     border:none;
     border-radius:18px;
-
     padding:12px 18px;
-
     font-size:1rem;
     font-family:inherit;
-
     cursor:pointer;
 
     background:rgba(255,255,255,.15);
     color:white;
 
     transition:.2s;
-
-    backdrop-filter:blur(5px);
 }
 
 button:hover{
@@ -156,34 +141,26 @@ input[type="range"]{
     margin-top:10px;
     opacity:.8;
 }
-
-.footer{
-    margin-top:30px;
-    font-size:.9rem;
-    opacity:.65;
-}
 </style>
 </head>
+
 <body>
 
 <div class="stars"></div>
 
 <div class="card">
 
-    <!-- Eigenen Dino hier einfügen -->
-    <img src="dino.png" alt="Kleiner Dino" class="dino">
+    <img src="dino.png" class="dino" alt="Dino">
 
     <h1>Für Hanni</h1>
 
     <p class="subtitle">
-        Für lange Zugfahrten,<br>
-        Regentage<br>
-        und alle Geschichten, die noch auf uns warten.
+        Zum Einschlafen, Wachbleiben, Zugfahrten<br>
+        oder immer, wenn die ??? schon zu gruselig ist.
     </p>
 
     <audio id="audio">
         <source src="fuerhanni.mp3" type="audio/mpeg">
-        Dein Browser unterstützt Audio nicht.
     </audio>
 
     <div class="controls">
@@ -193,22 +170,11 @@ input[type="range"]{
     </div>
 
     <div class="progress">
-        <input
-            type="range"
-            id="seekbar"
-            min="0"
-            max="100"
-            value="0">
+        <input type="range" id="seekbar" min="0" max="100" value="0">
     </div>
 
     <div class="time">
-        <span id="current">0:00</span>
-        /
-        <span id="duration">0:00</span>
-    </div>
-
-    <div class="footer">
-        🦕✨
+        <span id="current">0:00</span> / <span id="duration">0:00</span>
     </div>
 
 </div>
@@ -223,73 +189,46 @@ const seekbar = document.getElementById("seekbar");
 const current = document.getElementById("current");
 const duration = document.getElementById("duration");
 
-function formatTime(seconds){
-    if(isNaN(seconds)) return "0:00";
-
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-
-    return mins + ":" + String(secs).padStart(2,"0");
+function formatTime(s){
+    if(isNaN(s)) return "0:00";
+    const m = Math.floor(s/60);
+    const sec = Math.floor(s%60);
+    return m + ":" + String(sec).padStart(2,"0");
 }
 
-audio.addEventListener("loadedmetadata", () => {
+audio.addEventListener("loadedmetadata", ()=>{
     duration.textContent = formatTime(audio.duration);
 });
 
-playBtn.addEventListener("click", async () => {
-
+playBtn.addEventListener("click", async ()=>{
     if(audio.paused){
-        try{
-            await audio.play();
-            playBtn.textContent = "⏸️ Pause";
-        }catch(err){
-            console.error(err);
-        }
-    }else{
+        await audio.play();
+        playBtn.textContent = "⏸️ Pause";
+    } else {
         audio.pause();
         playBtn.textContent = "▶️ Abspielen";
     }
 });
 
-audio.addEventListener("ended", () => {
-    playBtn.textContent = "▶️ Abspielen";
+backBtn.addEventListener("click", ()=>{
+    audio.currentTime = Math.max(0, audio.currentTime - 10);
 });
 
-backBtn.addEventListener("click", () => {
-    audio.currentTime = Math.max(
-        0,
-        audio.currentTime - 10
-    );
+forwardBtn.addEventListener("click", ()=>{
+    audio.currentTime = Math.min(audio.duration, audio.currentTime + 10);
 });
 
-forwardBtn.addEventListener("click", () => {
-    audio.currentTime = Math.min(
-        audio.duration || Infinity,
-        audio.currentTime + 10
-    );
-});
-
-audio.addEventListener("timeupdate", () => {
-
-    current.textContent =
-        formatTime(audio.currentTime);
-
+audio.addEventListener("timeupdate", ()=>{
+    current.textContent = formatTime(audio.currentTime);
     if(audio.duration){
-        seekbar.value =
-            (audio.currentTime / audio.duration) * 100;
+        seekbar.value = (audio.currentTime / audio.duration) * 100;
     }
 });
 
-seekbar.addEventListener("input", () => {
-
-    if(audio.duration){
-
-        audio.currentTime =
-            (seekbar.value / 100) * audio.duration;
-    }
+seekbar.addEventListener("input", ()=>{
+    audio.currentTime = (seekbar.value / 100) * audio.duration;
 });
 </script>
 
 </body>
 </html>
-```
